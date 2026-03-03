@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    .error-container { min-height: 100vh; background: #0d6efd; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+  </style>
+</head>
+<body>
+  <div class="error-container d-flex align-items-center text-white">
+    <div class="container text-center">
+      <div class="mb-4">
+        <i class="fas fa-server" style="font-size: 5rem; opacity: 0.8;"></i>
+      </div>
+      <h1 class="display-4 fw-bold">500 - Server Error</h1>
+      <p class="lead">Something went wrong on our side. Please try again later.</p>
+      <a href="/" class="btn btn-light mt-3"><i class="fas fa-home"></i> Go Home</a>
+      <% if (error && error.message) { %>
+        <pre class="text-start bg-dark text-light p-3 mt-4 rounded"><%= error.stack || error.message %></pre>
+      <% } %>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

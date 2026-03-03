@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Profile - Diet Dash</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+  <a class="navbar-brand" href="/"><i class="fas fa-leaf"></i> Diet Dash</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/user/dashboard">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/user/profile">Profile</a></li>
+          <li class="nav-item"><a class="nav-link" href="/user/cart">Cart <span class="badge bg-secondary cart-badge"><%= (user.cart && user.cart.length) || 0 %></span></a></li>
+          <li class="nav-item ms-3 d-flex align-items-center theme-toggle">
+            <input type="checkbox" class="theme-toggle-checkbox" id="themeSwitchLocal1" />
+            <label for="themeSwitchLocal1" class="theme-switch-label">
+              <i class="bi bi-brightness-high-fill icon-light"></i>
+              <i class="bi bi-moon-fill icon-dark"></i>
+            </label>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+    <h2 class="mb-3">Your Profile</h2>
+
+    <% if (error) { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+    <% if (success) { %>
+      <div class="alert alert-success"><%= success %></div>
+    <% } %>
+
+    <form action="/user/profile" method="POST" class="row g-3">
+      <div class="col-md-3">
+        <label class="form-label">Height (cm)</label>
+        <input type="number" class="form-control" name="height" min="100" max="250" value="<%= formData.height||'' %>" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Weight (kg)</label>
+        <input type="number" class="form-control" name="weight" min="30" max="300" value="<%= formData.weight||'' %>" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Age</label>
+        <input type="number" class="form-control" name="age" min="13" max="100" value="<%= formData.age||'' %>" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Gender</label>
+        <select class="form-select" name="gender" required>
+          <option value="male" <%= formData.gender==='male'?'selected':'' %>>Male</option>
+          <option value="female" <%= formData.gender==='female'?'selected':'' %>>Female</option>
+          <option value="other" <%= formData.gender==='other'?'selected':'' %>>Other</option>
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Activity Level</label>
+        <select class="form-select" name="activityLevel" required>
+          <option value="sedentary" <%= formData.activityLevel==='sedentary'?'selected':'' %>>Sedentary</option>
+          <option value="moderate" <%= formData.activityLevel==='moderate'?'selected':'' %>>Moderate</option>
+          <option value="active" <%= formData.activityLevel==='active'?'selected':'' %>>Active</option>
+          <option value="athlete" <%= formData.activityLevel==='athlete'?'selected':'' %>>Athlete</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Health Goal</label>
+        <select class="form-select" name="healthGoal" required>
+          <option value="weight_loss" <%= formData.healthGoal==='weight_loss'?'selected':'' %>>Weight Loss</option>
+          <option value="weight_gain" <%= formData.healthGoal==='weight_gain'?'selected':'' %>>Weight Gain</option>
+          <option value="maintenance" <%= formData.healthGoal==='maintenance'?'selected':'' %>>Maintenance</option>
+          <option value="muscle_gain" <%= formData.healthGoal==='muscle_gain'?'selected':'' %>>Muscle Gain</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Dietary Preferences</label>
+        <div class="d-flex flex-wrap gap-2">
+          <% const prefs=['vegetarian','vegan','jain','gluten_free','keto','diabetic_friendly','low_sodium','high_protein']; %>
+          <% prefs.forEach(p => { %>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="dietaryPreferences" value="<%= p %>" <%= (Array.isArray(formData.dietaryPreferences) && formData.dietaryPreferences.includes(p))?'checked':'' %>>
+              <label class="form-check-label text-capitalize"><%= p.replace('_',' ') %></label>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <button class="btn btn-primary">Update Profile</button>
+      </div>
+    </form>
+
+    <hr />
+
+    <div class="row mt-4">
+      <!-- Activity Stats card -->
+      <div class="col-md-4 mb-3">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">Activity Stats</h5>
+            <p>Current streak: <strong id="currentStreak"><%= user.currentStreak || 0 %></strong></p>
+            <p>Best streak: <strong id="bestStreak"><%= user.bestStreak || 0 %></strong></p>
+            <p>7-day progress: <small id="sevenDayProgress">Calculating...</small></p>
+            <div class="d-flex gap-2 mt-2">
+              <button id="openLeaderboard" class="btn btn-outline-primary btn-sm">Friends Leaderboard</button>
+              <button id="refreshStats" class="btn btn-outline-secondary btn-sm">Refresh</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daily Tasks card -->
+      <div class="col-md-4 mb-3">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">Daily Tasks</h5>
+            <p class="mb-1 text-muted small">Complete any of the tasks below to count as today's exercise</p>
+            <div class="mb-3">
+              <label class="form-label">Today's Tasks</label>
+              <div id="exerciseTasks" class="d-flex flex-column">
+                <% const tasks = ['Morning walk (20 min)','Bodyweight circuit (15 min)','Stretching/Yoga (10 min)','Optional cardio (15 min)']; %>
+                <% tasks.forEach((t, idx) => { %>
+                  <div class="form-check">
+                    <input class="form-check-input exercise-task" type="checkbox" value="<%= t %>" id="task<%= idx %>">
+                    <label class="form-check-label" for="task<%= idx %>"><%= t %></label>
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label">Weight (kg)</label>
+              <input id="weightInput" type="number" step="0.1" class="form-control" placeholder="Optional">
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Body fat (%)</label>
+              <input id="fatInput" type="number" step="0.1" class="form-control" placeholder="Optional">
+            </div>
+
+            <div class="d-flex gap-2 mt-2">
+              <button id="submitExerciseBtn" class="btn btn-success btn-sm">Submit Today's Activity</button>
+              <button id="markExerciseBtn" class="btn btn-outline-success btn-sm">Mark Exercise Done</button>
+            </div>
+            <div id="exerciseMsg" class="mt-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Friend Search card -->
+      <div class="col-md-4 mb-3">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">Find Friends</h5>
+            <p class="text-muted small">Search by username or public ID (try "e.g., abhijit")</p>
+            <div class="input-group mb-3">
+              <input id="friendQuery" type="text" class="form-control" placeholder="e.g., abhijit" aria-label="Search users">
+              <button id="friendSearchBtn" class="btn btn-primary">Search</button>
+            </div>
+            <div id="searchResults" class="mb-2"></div>
+            <h6 class="mt-3">Incoming Requests</h6>
+            <div id="incomingRequests" data-reqs='<%- JSON.stringify(user.friendRequests || []) %>'></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="profileData" data-exhistory='<%- JSON.stringify(user.exerciseHistory || []) %>' style="display:none"></div>
+  <div id="meData" data-me='<%- JSON.stringify({ _id: user._id, username: user.username, avatar: user.avatar, currentStreak: user.currentStreak || 0 }) %>' style="display:none"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/cart.js"></script>
+  <script src="/js/theme.js"></script>
+  <script>
+  // Helper: safe access to server-passed exercise history via hidden data element
+  const dataEl = document.getElementById('profileData');
+  const serverExerciseHistory = dataEl ? JSON.parse(dataEl.dataset.exhistory || '[]') : [];
+
+  // Compute 7-day progress from serverExerciseHistory and update UI
+    function computeSevenDayProgress() {
+      const sevenAgo = new Date(); sevenAgo.setDate(sevenAgo.getDate() - 6);
+      const recent = serverExerciseHistory.filter(h => new Date(h.date) >= sevenAgo);
+      const totalWeightDelta = recent.reduce((s, r) => s + (typeof r.weightDelta === 'number' ? r.weightDelta : 0), 0);
+      const totalFatDelta = recent.reduce((s, r) => s + (typeof r.fatDelta === 'number' ? r.fatDelta : 0), 0);
+      const el = document.getElementById('sevenDayProgress');
+      if (el) el.textContent = `weight Δ ${totalWeightDelta.toFixed(1)} kg, fat Δ ${totalFatDelta.toFixed(1)}%`;
+    }
+
+    computeSevenDayProgress();
+
+    // Mark exercise done button
+    const markBtn = document.getElementById('markExerciseBtn');
+    if (markBtn) {
+      markBtn.addEventListener('click', async function(){
+        const btn = this; btn.disabled = true;
+        const res = await fetch('/user/exercise/done', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+        const data = await res.json();
+        const msg = document.getElementById('exerciseMsg');
+        if (data.success) {
+          document.getElementById('currentStreak').textContent = data.currentStreak;
+          document.getElementById('bestStreak').textContent = data.bestStreak;
+          msg.innerHTML = '<div class="alert alert-success">Marked exercise for today. Great job!</div>';
+        } else {
+          msg.innerHTML = '<div class="alert alert-info">' + (data.message || 'Could not mark') + '</div>';
+        }
+        btn.disabled = false;
+      });
+    }
+
+    // Debounced live friend search + search button
+    const friendQuery = document.getElementById('friendQuery');
+    const friendSearchBtn = document.getElementById('friendSearchBtn');
+    let searchTimeout;
+    async function performFriendSearch(q) {
+      const container = document.getElementById('searchResults');
+      container.innerHTML = '';
+      if (!q) return;
+      const res = await fetch('/user/users/search?q=' + encodeURIComponent(q));
+      const json = await res.json();
+      if (json.success && json.data.length) {
+        json.data.forEach(u => {
+          const el = document.createElement('div');
+          el.className = 'd-flex align-items-center justify-content-between p-2 border mb-2';
+          el.innerHTML = `<div><img src="${u.avatar||'/images/default-avatar.png'}" width="36" class="rounded-circle me-2"> <strong>${u.username}</strong> <small class="text-muted">(${u.publicId})</small></div><div><button class="btn btn-sm btn-outline-primary send-request" data-id="${u._id}">Send Request</button></div>`;
+          container.appendChild(el);
+        });
+        container.querySelectorAll('.send-request').forEach(btn => {
+          btn.addEventListener('click', async function(){
+            const id = this.dataset.id;
+            const res = await fetch('/user/friends/request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ toUserId: id }) });
+            const j = await res.json();
+            if (j.success) this.textContent = 'Request Sent';
+          });
+        });
+      } else {
+        container.innerHTML = '<div class="text-muted">No users found</div>';
+      }
+    }
+
+    friendQuery.addEventListener('input', function(){
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => performFriendSearch(friendQuery.value.trim()), 200);
+    });
+
+    friendSearchBtn.addEventListener('click', function(){
+      performFriendSearch(friendQuery.value.trim());
+    });
+
+    // Load incoming requests details and wire accept buttons
+    (function loadIncomingRequests(){
+      const container = document.getElementById('incomingRequests');
+      const raw = container.dataset.reqs || '[]';
+      let ids = [];
+      try { ids = JSON.parse(raw); } catch(e) { ids = []; }
+      if (!ids.length) { container.innerHTML = '<div class="text-muted">No incoming requests</div>'; return; }
+      ids.forEach(async id => {
+        try {
+          const res = await fetch('/user/users/' + encodeURIComponent(id));
+          const j = await res.json();
+          if (j.success && j.data) {
+            const u = j.data;
+            const el = document.createElement('div');
+            el.className = 'alert alert-info d-flex align-items-center justify-content-between';
+            el.innerHTML = `<div><img src="${u.avatar||'/images/default-avatar.png'}" width="36" class="rounded-circle me-2"> <strong>${u.username}</strong> <small class="text-muted">(${u.publicId||''})</small></div><div><button class="btn btn-sm btn-primary ms-2 accept-request" data-from="${u._id}">Accept</button></div>`;
+            container.appendChild(el);
+          }
+        } catch (err) {
+          console.error('Could not load requester', id, err);
+        }
+      });
+
+      // Attach handler after items may have been added (simple delegation)
+      container.addEventListener('click', async function(e){
+        const btn = e.target.closest('.accept-request');
+        if (!btn) return;
+        const from = btn.dataset.from;
+        btn.disabled = true;
+        const res = await fetch('/user/friends/accept', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fromUserId: from }) });
+        const j = await res.json();
+        if (j.success) btn.closest('.alert').remove();
+      });
+    })();
+
+    // Submit today's activity
+    document.getElementById('submitExerciseBtn').addEventListener('click', async function(){
+      const btn = this; btn.disabled = true;
+      const tasks = Array.from(document.querySelectorAll('.exercise-task')).map(i => ({ name: i.value, done: i.checked }));
+      const weightVal = parseFloat(document.getElementById('weightInput').value);
+      const fatVal = parseFloat(document.getElementById('fatInput').value);
+      const payload = { tasks, weight: isNaN(weightVal)?undefined:weightVal, fatPercentage: isNaN(fatVal)?undefined:fatVal };
+      const res = await fetch('/user/exercise/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const j = await res.json();
+      const msg = document.getElementById('exerciseMsg');
+      if (j.success) {
+        document.getElementById('currentStreak').textContent = j.currentStreak;
+        document.getElementById('bestStreak').textContent = j.bestStreak;
+        msg.innerHTML = `<div class="alert alert-success">Activity saved. 7-day weight Δ: ${j.sevenDay.weightDelta.toFixed(1)} kg, fat Δ: ${j.sevenDay.fatDelta.toFixed(1)}%</div>`;
+        // update local serverExerciseHistory and recompute
+        serverExerciseHistory.push({ date: new Date().toISOString(), weightDelta: j.sevenDay.weightDelta, fatDelta: j.sevenDay.fatDelta });
+        computeSevenDayProgress();
+      } else {
+        msg.innerHTML = '<div class="alert alert-danger">Could not save activity</div>';
+      }
+      btn.disabled = false;
+    });
+
+    // Leaderboard modal
+    document.getElementById('openLeaderboard').addEventListener('click', async function(){
+      const res = await fetch('/user/leaderboard');
+      const j = await res.json();
+      if (!j.success) return alert('Could not load leaderboard');
+      const rows = j.data.map((u, idx) => `<tr><td>#${idx+1}</td><td><img src="${u.avatar||'/images/default-avatar.png'}" width="36" class="rounded-circle me-2">${u.username}</td><td>${u.currentStreak||0}</td></tr>`).join('');
+      const modalHtml = `
+        <div class="modal" tabindex="-1" style="display:block; background: rgba(0,0,0,0.5);">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header"><h5 class="modal-title">Friends Leaderboard</h5><button class="btn-close" id="closeLb"></button></div>
+              <div class="modal-body"><table class="table"><thead><tr><th>Rank</th><th>User</th><th>Streak</th></tr></thead><tbody>${rows}</tbody></table></div>
+            </div>
+          </div>
+        </div>`;
+      const wrapper = document.createElement('div'); wrapper.innerHTML = modalHtml;
+      document.body.appendChild(wrapper);
+      document.getElementById('closeLb').addEventListener('click', () => wrapper.remove());
+    });
+  </script>
+</body>
+</html>

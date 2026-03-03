@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+.hero-section {
+            background: linear-gradient(135deg, #FFF176 0%, #FFB300 100%);
+            color: #2F2A1F;
+            padding: 100px 0;
+        }
+        .feature-card {
+            transition: transform 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.8rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-warning">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-leaf"></i> Diet Dash
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user/profile">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user/cart">Cart <span class="badge bg-secondary ms-1 cart-badge"><%= (user && user.cart && user.cart.length) || 0 %></span></a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <% if (user) { %>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user"></i> <%= user.username %>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <% if (user.role === 'admin') { %>
+                                    <li><a class="dropdown-item" href="/admin/dashboard">Admin Dashboard</a></li>
+                                <% } else { %>
+                                    <li><a class="dropdown-item" href="/user/dashboard">Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="/user/profile">Profile</a></li>
+                                    <li><a class="dropdown-item" href="/user/cart">Cart <span class="badge bg-secondary ms-1 cart-badge"><%= (user.cart && user.cart.length) || 0 %></span></a></li>
+                                <% } %>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/auth/logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
+                            </ul>
+                        </li>
+                        <form id="logout-form" action="/auth/logout" method="POST" style="display: none;"></form>
+                    <% } else { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/auth/login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/auth/signup">Sign Up</a>
+                        </li>
+                    <% } %>
+                    <li class="nav-item ms-3 d-flex align-items-center theme-toggle">
+                        <input type="checkbox" id="themeSwitch" class="theme-toggle-checkbox" />
+                        <label for="themeSwitch" class="theme-switch-label">
+                            <i class="bi bi-brightness-high-fill icon-light"></i>
+                            <i class="bi bi-moon-fill icon-dark"></i>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">Your Personal Diet & Food Delivery App</h1>
+                    <p class="lead mb-4">Get personalized meal recommendations, track your nutrition, and order healthy food directly to your door. Achieve your health goals with Diet Dash!</p>
+                    <div class="d-flex gap-3">
+                        <% if (!user) { %>
+                            <a href="/auth/signup" class="btn btn-light btn-lg px-4">Get Started</a>
+                        <% } %>
+                        <a href="/user/dashboard" class="btn btn-dark btn-lg px-4">Go to Dashboard</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+<div class="text-center">
+                        <img alt="Delicious food" src="https://t3.ftcdn.net/jpg/05/70/04/02/240_F_570040265_4xitPhVoc637RBqvEDHCX0BJ1mSpqtgo.jpg" class="img-fluid rounded shadow-custom border-gradient" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Theme switcher: persist in localStorage
+        (function(){
+            const body = document.body;
+            const switchEl = document.getElementById('themeSwitch');
+            const applyMode = (mode) => {
+                if (mode === 'dark') {
+                    body.classList.remove('light-mode');
+                    body.classList.add('dark-mode');
+                    switchEl.setAttribute('data-mode','dark');
+                } else {
+                    body.classList.remove('dark-mode');
+                    body.classList.add('light-mode');
+                    switchEl.setAttribute('data-mode','light');
+                }
+                localStorage.setItem('dietdash-theme', mode);
+            };
+
+            // initialize from localStorage or prefers-color-scheme
+            const saved = localStorage.getItem('dietdash-theme');
+            if (saved) applyMode(saved);
+            else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) applyMode('dark');
+            else applyMode('light');
+
+            switchEl.addEventListener('click', function(){
+                const current = switchEl.getAttribute('data-mode');
+                applyMode(current === 'dark' ? 'light' : 'dark');
+            });
+        })();
+    </script>
+
+    <!-- Features Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col">
+                    <h2 class="display-5 fw-bold">Why Choose Diet Dash?</h2>
+                    <p class="lead text-muted">Everything you need for a healthy lifestyle in one app</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 feature-card shadow-sm border-0">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-calculator text-primary" style="font-size: 3rem;"></i>
+                            </div>
+                            <h5 class="card-title">Personalized Nutrition</h5>
+                            <p class="card-text">Get customized meal plans based on your height, weight, age, activity level, and health goals using advanced BMR calculations.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 feature-card shadow-sm border-0">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-truck text-success" style="font-size: 3rem;"></i>
+                            </div>
+                            <h5 class="card-title">Food Delivery</h5>
+                            <p class="card-text">Order healthy, nutritious meals from partner restaurants. Each meal comes with detailed nutritional information and fits your diet plan.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 feature-card shadow-sm border-0">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-chart-line text-warning" style="font-size: 3rem;"></i>
+                            </div>
+                            <h5 class="card-title">Progress Tracking</h5>
+                            <p class="card-text">Track your daily nutrition intake, monitor your progress towards health goals, and maintain streaks with gamification features.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 feature-card shadow-sm border-0">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-robot text-info" style="font-size: 3rem;"></i>
+                            </div>
+                            <h5 class="card-title">AI Diet Assistant</h5>
+                            <p class="card-text">Ask our intelligent chatbot for food recommendations based on your preferences, budget, and dietary restrictions.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 feature-card shadow-sm border-0">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-trophy text-danger" style="font-size: 3rem;"></i>
+                            </div>
+                            <h5 class="card-title">Achievements</h5>
+                            <p class="card-text">Earn badges and maintain streaks as you progress towards your health goals. Gamification makes healthy eating fun!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 feature-card shadow-sm border-0">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-leaf text-success" style="font-size: 3rem;"></i>
+                            </div>
+                            <h5 class="card-title">Dietary Preferences</h5>
+                            <p class="card-text">Support for all dietary preferences including vegetarian, vegan, keto, gluten-free, and more. Find foods that match your lifestyle.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="bg-light py-5">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col">
+                    <h2 class="display-5 fw-bold">How It Works</h2>
+                    <p class="lead text-muted">Get started with Diet Dash in 3 simple steps</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <span class="fs-3 fw-bold">1</span>
+                        </div>
+                        <h4 class="mt-3">Create Profile</h4>
+                        <p class="text-muted">Sign up and complete your profile with height, weight, age, activity level, and health goals.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <span class="fs-3 fw-bold">2</span>
+                        </div>
+                        <h4 class="mt-3">Get Recommendations</h4>
+                        <p class="text-muted">Receive personalized meal plans and food recommendations based on your profile and dietary preferences.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <div class="rounded-circle bg-warning text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <span class="fs-3 fw-bold">3</span>
+                        </div>
+                        <h4 class="mt-3">Track & Order</h4>
+                        <p class="text-muted">Log your meals, track progress, and order healthy food directly from partner restaurants.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-leaf"></i> Diet Dash</h5>
+                    <p class="text-muted">Your personal diet and food delivery companion for a healthier lifestyle.</p>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Quick Links</h6>
+                            <ul class="list-unstyled">
+                                <li><a href="/" class="text-muted text-decoration-none">Home</a></li>
+                                <li><a href="/about" class="text-muted text-decoration-none">About</a></li>
+                                <li><a href="/contact" class="text-muted text-decoration-none">Contact</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Support</h6>
+                            <ul class="list-unstyled">
+                                <li><span class="text-muted">Email: support@dietdash.com</span></li>
+                                <li><span class="text-muted">Phone: +91-5648-3265</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-3">
+            <div class="row">
+                <div class="col text-center">
+                    <p class="text-muted mb-0">&copy; 2025 Diet Dash. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+  // GSAP Hungry Theme Animations
+  gsap.from('.navbar', { y: -80, opacity: 0, duration: 0.8, ease: 'power3.out' });
+  gsap.from('.hero-section h1', { y: 40, opacity: 0, duration: 1, delay: 0.2, ease: 'power3.out' });
+  gsap.from('.hero-section p', { y: 30, opacity: 0, duration: 1, delay: 0.35, ease: 'power3.out' });
+  gsap.from('.hero-section .btn', { y: 20, opacity: 0, duration: 0.8, delay: 0.5, stagger: 0.1, ease: 'power3.out' });
+  gsap.from('.feature-card', {
+    scrollTrigger: { trigger: '.feature-card', start: 'top 85%' },
+    y: 30, opacity: 0, duration: 0.6, stagger: 0.15, ease: 'power2.out'
+  });
+</script>
+<script src="/js/cart.js"></script>
+</body>
+</html>

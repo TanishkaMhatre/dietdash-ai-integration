@@ -1,0 +1,489 @@
+/* Diet Dash Main Styles */
+
+:root {
+    /* Food-centric yellow/orange palette */
+    --primary-color: #FFC107;   /* golden yellow */
+    --secondary-color: #FF8F00; /* deep amber */
+    --accent-color: #FF7043;    /* appetizing orange */
+    --success-color: #43A047;
+    --warning-color: #FFC107;
+    --danger-color: #E53935;
+    --info-color: #FFA000;
+    --light-color: #FFF8E1;     /* warm light */
+    --dark-color: #2F2A1F;      /* deep brown for food vibe */
+    --border-radius: 12px;
+    --box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* Global Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--dark-color);
+}
+
+.gradient-bg {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+/* Food pattern background utility */
+.bg-food {
+    background: radial-gradient(circle at 10% 20%, rgba(255, 193, 7, 0.25) 0%, transparent 25%),
+                radial-gradient(circle at 90% 10%, rgba(255, 143, 0, 0.25) 0%, transparent 20%),
+                radial-gradient(circle at 70% 80%, rgba(255, 112, 67, 0.2) 0%, transparent 25%),
+                linear-gradient(135deg, #FFFDE7 0%, #FFF3E0 100%);
+}
+
+.card {
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn {
+    border-radius: var(--border-radius);
+    padding: 0.5rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Navigation */
+.navbar {
+    padding: 1rem 0;
+    box-shadow: 0 2px 8px rgba(255, 143, 0, 0.15);
+}
+
+.navbar-brand {
+    color: #2F2A1F !important;
+}
+
+.navbar a.nav-link {
+    color: #3E3A2E !important;
+}
+
+.navbar a.nav-link.active, .navbar a.nav-link:hover {
+    color: #FF6F00 !important;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.8rem;
+}
+
+/* Progress Bars */
+.progress {
+    height: 10px;
+    border-radius: 5px;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    border-radius: 5px;
+}
+
+/* Food Cards */
+.food-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.food-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.food-card img {
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.nutrition-info {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.price-tag {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--success-color);
+}
+
+/* Badges */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.4em 0.6em;
+    border-radius: 15px;
+}
+
+.dietary-tag {
+    background-color: var(--info-color);
+    color: white;
+    margin: 0.2rem;
+    display: inline-block;
+}
+
+/* Dashboard Cards */
+.stat-card {
+    background: linear-gradient(135deg, #FFD54F 0%, #FF8F00 100%);
+    color: #2F2A1F;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-card .stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card .stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* Achievement Badges */
+.achievement-badge {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border-radius: 20px;
+    padding: 1rem;
+    text-align: center;
+    margin: 0.5rem;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.achievement-badge:hover {
+    transform: scale(1.05);
+}
+
+.achievement-badge .badge-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.achievement-badge .badge-name {
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.achievement-badge .badge-description {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+/* Charts */
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin: 1rem 0;
+}
+
+/* Form Styles */
+.form-control {
+    border-radius: var(--border-radius);
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.form-select {
+    border-radius: var(--border-radius);
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+}
+
+/* Alerts */
+.alert {
+    border-radius: var(--border-radius);
+    border: none;
+    padding: 1rem 1.25rem;
+}
+
+/* Tables */
+.table {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+}
+
+.table thead th {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    font-weight: 600;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(102, 126, 234, 0.05);
+}
+
+/* Modals */
+.modal-content {
+    border-radius: var(--border-radius);
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+/* Pagination */
+.pagination .page-link {
+    border-radius: 5px;
+    margin: 0 2px;
+    border: none;
+    color: var(--primary-color);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Loading Spinner */
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.spinner-border-custom {
+    width: 3rem;
+    height: 3rem;
+    color: var(--primary-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .stat-card .stat-number {
+        font-size: 2rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.5rem;
+    }
+    
+    .achievement-badge {
+        min-height: 100px;
+        margin: 0.25rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Utilities */
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+.border-gradient {
+    border: 2px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, var(--primary-color), var(--secondary-color)) border-box;
+}
+
+.shadow-custom {
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #121212;
+        color: #e0e0e0;
+    }
+    
+    .card {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+    }
+    
+    .table {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+    }
+    
+    .form-control {
+        background-color: #2e2e2e;
+        border-color: #444;
+        color: #e0e0e0;
+    }
+}
+
+/* Theme utility classes - explicit light/dark mode switching */
+.light-mode {
+        background-color: #ffffff;
+        color: #2f2a1f;
+}
+.light-mode .card { background-color: #ffffff; color: #2f2a1f; }
+.light-mode .navbar { background: linear-gradient(90deg, var(--primary-color), var(--secondary-color)) !important; }
+.light-mode .navbar .nav-link { color: #2f2a1f !important; }
+.light-mode .navbar .nav-link:hover { color: #ffffff !important; }
+.light-mode .hero-section { background: linear-gradient(135deg, #FFFDE7 0%, #FFF3E0 100%); }
+
+.dark-mode {
+        background-color: #0f1115;
+        color: #e6eef6;
+}
+.dark-mode .card { background-color: #121418; color: #e6eef6; }
+.dark-mode .navbar { background: linear-gradient(90deg, var(--primary-color), var(--secondary-color)) !important; }
+/* Dark mode: make navbar links and brand clearly visible (white) on hover and when active */
+.dark-mode .navbar .nav-link,
+.dark-mode .navbar .navbar-brand {
+    color: #ffffff !important;
+}
+.dark-mode .navbar .nav-link:hover,
+.dark-mode .navbar .nav-link.active,
+.dark-mode .navbar .dropdown-toggle {
+    color: #ffffff !important;
+}
+
+/* Fancy animated icon slider for theme toggle */
+.theme-toggle-checkbox {
+    /* hide the native checkbox visually but keep it in the DOM for accessibility */
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: -1px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    clip: rect(0 0 0 0) !important;
+    clip-path: inset(50%) !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+}
+
+.theme-switch-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 68px;
+    height: 34px;
+    border-radius: 20px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+    position: relative;
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.06);
+    transition: background 280ms ease, transform 300ms ease;
+    cursor: pointer;
+    vertical-align: middle;
+    border: 1px solid rgba(47,42,31,0.08); /* visible border so area reads as a control */
+    padding: 0 8px;
+}
+
+.theme-switch-label .icon-light, .theme-switch-label .icon-dark {
+    font-size: 16px;
+    transition: opacity 220ms ease, transform 260ms ease;
+}
+
+.theme-switch-label .icon-light { color: #FFC107; opacity: 1; transform: translateX(0); }
+.theme-switch-label .icon-dark { color: #FFFFFF; opacity: 0; transform: translateX(6px); }
+
+/* knob */
+.theme-switch-label::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 6px;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+    transition: left 300ms cubic-bezier(.2,.9,.3,1), background 300ms ease, transform 220ms ease;
+}
+
+/* checked state */
+.theme-toggle-checkbox:checked + .theme-switch-label {
+    background: linear-gradient(90deg, #37474F, #263238);
+    border-color: rgba(255,255,255,0.06);
+}
+.theme-toggle-checkbox:checked + .theme-switch-label::after {
+    left: 36px;
+    background: #1e1e1e;
+}
+.theme-toggle-checkbox:checked + .theme-switch-label .icon-light { opacity: 0; transform: translateX(-6px); }
+.theme-toggle-checkbox:checked + .theme-switch-label .icon-dark { opacity: 1; transform: translateX(0); }
+
+/* ensure good contrast in dark-mode for the label when used inside navbar */
+.dark-mode .theme-switch-label { background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); }
+.dark-mode .theme-switch-label::after { background: #e6eef6; }
+.dark-mode .navbar .nav-link { color: #2f2a1f !important; }
+
+/* Night mode toggle (fancy) */
+.theme-toggle { display: inline-flex; align-items: center; gap: .5rem; }
+
+/* Small responsive fix for navbar toggle area */
+@media (max-width: 576px) {
+    .theme-toggle { display: none; }
+}

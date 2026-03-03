@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Food Items - Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+  <a class="navbar-brand" href="/admin/dashboard"><i class="fas fa-leaf"></i> Diet Dash Admin</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/admin/dashboard">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/admin/food-items">Food Items</a></li>
+          <li class="nav-item"><a class="nav-link" href="/admin/users">Users</a></li>
+          <li class="nav-item"><a class="nav-link" href="/admin/orders">Orders</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <main class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2>Food Items</h2>
+      <a class="btn btn-primary" href="/admin/food-items/add"><i class="bi bi-plus"></i> Add Food Item</a>
+    </div>
+
+    <form class="row g-2" method="GET">
+      <div class="col-md-4">
+        <input class="form-control" name="search" placeholder="Search name or restaurant" value="<%= search || '' %>">
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" name="category">
+          <option value="">All Categories</option>
+          <%- ['breakfast','lunch','dinner','snacks','drinks','desserts'].map(c => `<option ${category===c?'selected':''} value="${c}">${c}</option>`).join('') %>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" name="cuisineType">
+          <option value="">All Cuisines</option>
+          <%- ['indian','italian','chinese','mexican','american','thai','continental','japanese','korean','mediterranean'].map(c => `<option ${cuisineType===c?'selected':''} value="${c}">${c}</option>`).join('') %>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-outline-primary w-100">Filter</button>
+      </div>
+    </form>
+
+    <div class="row mt-3 g-3">
+      <% (foodItems || []).forEach(fi => { %>
+        <div class="col-md-4">
+          <div class="card food-card h-100">
+<% let imgSrc = (fi.image && fi.image.path) ? fi.image.path : '/images/placeholder.png'; %>
+            <img src="<%= imgSrc.startsWith('http') ? imgSrc : (imgSrc.startsWith('/') ? imgSrc : '/' + imgSrc) %>" class="card-img-top" alt="Food image">
+            <div class="card-body">
+              <h5 class="card-title d-flex justify-content-between">
+                <span><%= fi.name %></span>
+                <span class="price-tag">₹<%= fi.price %></span>
+              </h5>
+              <p class="card-text"><%= fi.description || '' %></p>
+              <div class="nutrition-info">
+                <span><strong><%= fi.nutrition.calories %></strong> kcal</span> ·
+                <span>P <%= fi.nutrition.protein %>g</span> ·
+                <span>C <%= fi.nutrition.carbs %>g</span> ·
+                <span>F <%= fi.nutrition.fats %>g</span>
+              </div>
+              <div class="mt-2">
+                <% (fi.dietaryTags || []).forEach(t => { %>
+                  <span class="badge bg-info me-1"><%= t %></span>
+                <% }) %>
+              </div>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+              <a href="/admin/food-items/edit/<%= fi._id %>" class="btn btn-sm btn-outline-secondary">Edit</a>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('<%= fi._id %>')">Delete</button>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+      <% if ((foodItems||[]).length === 0) { %>
+        <div class="col-12 text-center text-muted py-5">No food items found.</div>
+      <% } %>
+    </div>
+
+    <nav class="mt-4">
+      <ul class="pagination justify-content-center">
+        <% for (let p=1; p<= (totalPages||1); p++) { %>
+          <li class="page-item <%= p=== (currentPage||1)?'active':'' %>">
+            <a class="page-link" href="?page=<%= p %>&search=<%= search||'' %>&category=<%= category||'' %>&cuisineType=<%= cuisineType||'' %>"><%= p %></a>
+          </li>
+        <% } %>
+      </ul>
+    </nav>
+  </main>
+
+  <script>
+    async function deleteItem(id){
+      if(!confirm('Delete this item?')) return;
+      const res = await fetch(`/admin/food-items/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if(data.success){ location.reload(); } else { alert(data.message||'Delete failed'); }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
