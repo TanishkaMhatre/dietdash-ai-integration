@@ -5,28 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Dashboard - Diet Dash</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="/css/main.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <link rel="stylesheet" href="/css/main.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-  <a class="navbar-brand" href="/"><i class="fas fa-leaf"></i> Diet Dash</a>
+      <a class="navbar-brand" href="/"><i class="fas fa-leaf"></i> Diet Dash</a>
       <div class="collapse navbar-collapse">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link active" href="/user/dashboard">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="/user/profile">Profile</a></li>
-            <li class="nav-item"><a class="nav-link" href="/user/cart">Cart <span class="badge bg-secondary cart-badge"><%= (user.cart && user.cart.length) || 0 %></span></a></li>
-            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-            <li class="nav-item ms-3 d-flex align-items-center theme-toggle">
-              <input type="checkbox" id="themeSwitchLocal" class="theme-toggle-checkbox" />
-              <label for="themeSwitchLocal" class="theme-switch-label">
-                <i class="bi bi-brightness-high-fill icon-light"></i>
-                <i class="bi bi-moon-fill icon-dark"></i>
-              </label>
-            </li>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link active" href="/user/dashboard">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="/user/profile">Profile</a></li>
+          <li class="nav-item"><a class="nav-link" href="/user/cart">Cart <span class="badge bg-secondary cart-badge"><%= (user.cart && user.cart.length) || 0 %></span></a></li>
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item ms-3 d-flex align-items-center theme-toggle">
+            <input type="checkbox" id="themeSwitchLocal" class="theme-toggle-checkbox" />
+            <label for="themeSwitchLocal" class="theme-switch-label">
+              <i class="bi bi-brightness-high-fill icon-light"></i>
+              <i class="bi bi-moon-fill icon-dark"></i>
+            </label>
+          </li>
         </ul>
       </div>
     </div>
@@ -70,7 +70,18 @@
     <div class="row mt-4">
       <div class="col-lg-6 mb-4">
         <div class="card h-100">
-          <div class="card-header"><strong>Today's Meal Plan</strong></div>
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <strong>Today's Meal Plan</strong>
+
+            <% if (aiMeta) { %>
+              <span class="badge bg-success">
+                AI Engine ✅ | <%= aiMeta.goal %> | <%= aiMeta.diet %> | Daily: <%= aiMeta.daily_calories %> kcal
+              </span>
+            <% } else { %>
+              <span class="badge bg-secondary">DB Fallback</span>
+            <% } %>
+          </div>
+
           <div class="card-body">
             <div class="row g-3">
               <% const mealTypes=['breakfast','lunch','dinner','snacks']; %>
@@ -78,26 +89,40 @@
                 <div class="col-12">
                   <h6 class="text-uppercase text-muted mb-2"><%= type %></h6>
                   <div class="d-flex flex-wrap gap-2">
-                  <% (recommendedFoods || []).filter(f => f.category===type).forEach(f => { %>
-                    <div class="border p-2 rounded d-flex align-items-center" style="min-width:180px;">
-                      <div style="width:64px;height:64px;flex:0 0 64px;margin-right:10px;">
-                        <% if (f.imageUrl) { %>
-                          <img src="<%= f.imageUrl %>" style="width:64px;height:64px;object-fit:cover;border-radius:6px;" />
-                        <% } else if (f.image && f.image.filename) { %>
-                          <img src="/uploads/<%= f.image.filename %>" style="width:64px;height:64px;object-fit:cover;border-radius:6px;" />
-                        <% } else { %>
-                          <div style="width:64px;height:64px;background:#f0f0f0;border-radius:6px;"></div>
-                        <% } %>
-                      </div>
-                      <div style="flex:1 1 auto;">
-                        <div class="fw-bold"><%= f.name %></div>
-                        <small class="text-muted"><%= f.nutrition.calories %> kcal | P <%= f.nutrition.protein %>g</small>
-                        <div>
-                            <a class="btn btn-sm btn-outline-primary mt-1 add-to-cart-btn" data-id="<%= f._id %>">Add</a>
+                    <% (recommendedFoods || []).filter(f => f.category===type).forEach(f => { %>
+                      <div class="border p-2 rounded d-flex align-items-center" style="min-width:180px;">
+                        <div style="width:64px;height:64px;flex:0 0 64px;margin-right:10px;">
+                          <% if (f.imageUrl) { %>
+                            <img src="<%= f.imageUrl %>" style="width:64px;height:64px;object-fit:cover;border-radius:6px;" />
+                          <% } else if (f.image && f.image.filename) { %>
+                            <img src="/uploads/<%= f.image.filename %>" style="width:64px;height:64px;object-fit:cover;border-radius:6px;" />
+                          <% } else { %>
+                            <div style="width:64px;height:64px;background:#f0f0f0;border-radius:6px;"></div>
+                          <% } %>
+                        </div>
+
+                        <div style="flex:1 1 auto;">
+                          <div class="fw-bold">
+                            <%= f.name %>
+                            <% if (f.isAi) { %>
+                              <span class="badge bg-warning text-dark ms-1">AI</span>
+                            <% } %>
+                          </div>
+
+                          <small class="text-muted">
+                            <%= f.nutrition.calories %> kcal | P <%= f.nutrition.protein %>g
+                          </small>
+
+                          <div>
+                            <% if (f._id) { %>
+                              <a class="btn btn-sm btn-outline-primary mt-1 add-to-cart-btn" data-id="<%= f._id %>">Add</a>
+                            <% } else { %>
+                              <span class="text-muted" style="font-size:12px;">Suggestion (not orderable)</span>
+                            <% } %>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  <% }) %>
+                    <% }) %>
                   </div>
                 </div>
               <% }) %>
@@ -132,9 +157,9 @@
         </div>
       </div>
     </div>
-</main>
+  </main>
 
-    <script>
+  <script>
     gsap.from('.stat-card', { y: 20, opacity: 0, duration: 0.6, stagger: 0.15, ease: 'power2.out' });
     gsap.from('.card', { y: 30, opacity: 0, duration: 0.6, stagger: 0.1, delay: 0.2, ease: 'power2.out' });
   </script>

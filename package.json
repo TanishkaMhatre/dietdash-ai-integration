@@ -1,0 +1,49 @@
+{
+  "name": "diet-dash",
+  "version": "1.0.0",
+  "description": "Food Delivery and Diet Tracking Web Application",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "food",
+    "delivery",
+    "diet",
+    "tracking",
+    "nutrition",
+    "health"
+  ],
+  "author": "Your Name",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.3",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "moment": "^2.30.1",
+    "mongoose": "^8.19.1",
+    "multer": "^2.0.2",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "controllers",
+      "models",
+      "routes",
+      "views",
+      "utils",
+      "app.js"
+    ],
+    "ext": "js,json,ejs",
+    "exec": "node app.js"
+  }
+}
